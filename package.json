@@ -1,0 +1,16 @@
+{
+  "name": "devtinder-backend",
+  "version": "1.0.0",
+  "description": "this is the backend service of the DevTinder application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/App.js",
+    "dev": "nodemon src/App.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "michael",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
