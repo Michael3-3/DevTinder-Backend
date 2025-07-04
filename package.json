@@ -12,5 +12,14 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Michael3-3/DevTinder-Backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Michael3-3/DevTinder-Backend/issues"
+  },
+  "homepage": "https://github.com/Michael3-3/DevTinder-Backend#readme"
 }
