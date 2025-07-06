@@ -17,17 +17,13 @@ connectDb()
                 console.error("Error connecting to MongoDB:", err);
             });
 
+
+app.use(express.json()); // Middleware to parse JSON bodies
 app.post('/signup',async (req,res,next)=>{
-    const user = new User({
-        firstName: "stalin",
-        lastName: "pottella",
-        email: "stalin@pottella.com",
-        password: "password1234",
-        age: 80,
-        number: "1234567890",
-        });
+    const user = new User(req.body);
     try {
         await user.save();
+        console.log("User created successfully:", user);
         res.status(201).json({message: "User created successfully"});
     } catch (error) {   
         console.error("Error creating user:", error);
