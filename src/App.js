@@ -1,51 +1,37 @@
 const express = require('express');
+const connectDb = require('./config/database');
+
+const User = require('./models/user');
+
 const app = express();
-const [adminAuth,userAuth] = require('./middleware/auth');
-app.listen(3001,()=>{
-    console.log("Server is running on port 3001");
-})
 
 
-app.use('/admin', adminAuth);
+connectDb()
+            .then(() => {
+                console.log("Connected to MongoDB");
+                app.listen(3001,()=>{
+                console.log("Server is running on port 3001");
+                })
+            })
+            .catch((err) =>{
+                console.error("Error connecting to MongoDB:", err);
+            });
 
-app.get("/admin",(req,res,next)=>{
-     //res.send("Hello from DevTinder User");
-     try {
-     throw new Error("This is an error from the admin route");
-     }
-     catch (err) {
-        res.status(500).send("An error occurred: " + err.message);
-     }
-     next();
-        res.send("Hello from DevTinder admin");
-});
-
-// Error handling middleware
-app.use('/user', userAuth);
-
-app.get('/user',(req,res)=>{
-    throw new Error("This is an error from the user route");
-    res.send("Hello from DevTinder ");
-});
-
-
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!'+err.message);
-});
-// app.post("/user/:user/:id/:message",(req,res)=>{
-//     console.log(req.params);
-//     res.send("User created successfully");
-// });
-
-// app.use("/user",(req,res)=>{
-//     res.send("User route is being used");
-// });
-// app.use("/home",(req,res)=>{
-//     res.send("Hello from DevTinder Backend");
-// })
+app.post('/signup',async (req,res,next)=>{
+    const user = new User({
+        firstName: "stalin",
+        lastName: "pottella",
+        email: "stalin@pottella.com",
+        password: "password1234",
+        age: 80,
+        number: "1234567890",
+        });
+    try {
+        await user.save();
+        res.status(201).json({message: "User created successfully"});
+    } catch (error) {   
+        console.error("Error creating user:", error);
+        res.status(500).json({message: "Internal server error"});
+    }
    
-// app.use("/api",(req,res)=>{
-//     res.send("Hello from DevTinder API");
-// });
-
+});
