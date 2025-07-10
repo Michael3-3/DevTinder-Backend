@@ -54,3 +54,31 @@ app.get('/user/:id', async (req, res) => {
         res.status(500).json({message: "Internal server error"});
     }
 });
+
+
+app.delete('/user/:email', async (req, res) => {
+    try {
+        const user = await User.findOneAndDelete({email : req.params.email});
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+        res.json(user, {message: "User deleted successfully"});
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        res.status(500).json({message: "Internal server error"});
+    }
+});
+
+
+app.put('/user/:email', async (req, res) => {
+    try {
+        const user = await User.findOneAndUpdate({email: req.params.email},req.body,{overwrite:true, new:true});
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+        res.json({user:user ,message: "User updated successfully"});
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({message: "Internal server error"});
+    }
+    });
