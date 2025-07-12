@@ -83,11 +83,15 @@ app.delete('/user/:email', async (req, res) => {
         //console.error("Error deleting user:", error);
         res.status(500).json({message: "Internal server error", error: error.message});
     }
-});
+}); 
 
 
 app.put('/user/:email', async (req, res) => {
     try {
+        if(req.body.email && req.body.email !== req.params.email) {
+            return res.status(400).json({message: "Email cannot be changed"});// Prevent changing email
+        }
+        // Validate the request body against the User schema
         const user = await User.findOneAndUpdate({email: req.params.email},req.body,{overwrite:true, new:true , runValidators:true});
         if (!user) {
             return res.status(404).send("User not found");

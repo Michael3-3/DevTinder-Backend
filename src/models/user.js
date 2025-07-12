@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const validate = require('validator');
 
 const userSchema = new Schema({
     firstName: {
@@ -20,20 +21,22 @@ const userSchema = new Schema({
         unique: true,
         lowercase: true,
         trim: true,
-        match: [
-            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-            "{VALUE} is not a valid email address. Please provide a valid email address."
-        ]
+        validate(value) {
+            if (!validate.isEmail(value)) {
+                throw new Error("{VALUE} is not a valid email address.");
+            }
+        }
     },
     password: {
         type: String,
         required: true,
         maxLength: 1024, // Good for bcrypt hash
         select: false,
-        match: [
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            "{VALUE} is not a valid password. It must be at least 8 characters long and include uppercase, lowercase, number, and special character."
-        ]
+        validate(value) {
+            if (!validate.isStrongPassword(value)) {
+                throw new Error("{VALUE} is not a strong password.");
+            }
+        }
     },
     age: {
         type: Number,
