@@ -49,7 +49,7 @@ app.post('/signup',validateSingUp,async (req,res,next)=>{
     }
 });
 
-app.post('/login',loginValidation, async (req, res) => {
+app.post('/login',loginValidation, async (req, res,next) => {
     try{
         const user  =  req.user;
         console.log("User found:", user);

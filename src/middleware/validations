@@ -40,5 +40,4 @@ const loginValidation =async (req, res, next) => {
             next();
 }
 
-module.exports = {
-    validateSingUp}
+module.exports = {validateSingUp,loginValidation};
