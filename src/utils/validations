@@ -1,0 +1,19 @@
+const validate = require('validator');
+
+const validateSingUp = (req)=>{
+    if(!req.body.firstName || !req.body.email || !req.body.password ) {
+        return {message: "All fields are required"};
+    }
+    if(req.body.firstName.length > 50 || req.body.firstName.length < 2 || validate.isAlphanumeric(req.body.firstName) === false) {
+        return {message: "invalid first name"};
+    }
+    if(!validate.isEmail(req.body.email)) {
+        return {message: "invalid email"};
+    }
+    if(!validate.isStrongPassword(req.body.password)) {
+        return {message: "invalid password"};
+    }
+}
+
+module.exports = {
+    validateSingUp}

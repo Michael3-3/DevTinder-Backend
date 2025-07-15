@@ -31,7 +31,6 @@ const userSchema = new Schema({
         type: String,
         required: true,
         maxLength: 1024, // Good for bcrypt hash
-        select: false,
         validate(value) {
             if (!validate.isStrongPassword(value)) {
                 throw new Error("{VALUE} is not a strong password.");
