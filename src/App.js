@@ -24,14 +24,9 @@ connectDb()
 
  
 
-app.post('/signup',async (req,res,next)=>{
+app.post('/signup',validateSingUp,async (req,res,next)=>{
     
     try {
-        // Validate required fields
-        const validationError = validateSingUp(req);
-        if (validationError) {
-            return res.status(400).send(validationError);
-        }
         const passwordHash = await bcrypt.hash(req.body.password, 10);
 
         // hash password before saving
@@ -44,7 +39,10 @@ app.post('/signup',async (req,res,next)=>{
         await user.save();
         console.log("User created successfully:", user);
         res.status(201).send({message: "User created successfully", user});
-    } catch (err) {
+    } 
+    
+    
+    catch (err) {
         res.status(500).send({message: "Error creating user", error: err});
         
     }
@@ -158,9 +156,6 @@ app.put('/user/:email', async (req, res) => {
 
 app.use((err, req, res, next) => {
     
-    
-    
-    
     console.error("Error:", err);
-    res.status(500).json({message: "Internal server error"},err);
+    res.status(500).json({message: "Internal server hello error", error: err.message});
 });
