@@ -76,7 +76,7 @@ app.post('/login',loginValidation, async (req, res,next) => {
 app.get('/profile',userAuth, async (req, res) => {
     try{
         const user = req.user; // User is attached to the request object by the auth middleware
-
+        console.log("User profile:", user);
         res.json(user);
     }
     catch (error) {
@@ -84,18 +84,13 @@ app.get('/profile',userAuth, async (req, res) => {
         res.status(500).json({message: "Internal server error", error: error.message});
     }
 });
-app.get('/feed', async (req, res) =>{
+app.get('/feed',userAuth, async (req, res) =>{
     try{
         // Check if the user is authenticated
-        const token = req.cookies.token;
-        if(!token) throw new Error("Unauthorized access");
-
-        // Verify the token
-        const decoded = jwt.verify(token,'secretKey');
-        console.log("Decoded token:", decoded);
+        const user = req.user; // User is attached to the request object by the auth middleware
         // Fetch users from the database
-        const users = await User.find({});
-        res.send({users});
+        const feed = await User.find({});
+        res.send({feed});
         const cookie = req.cookies;
         console.log("Cookies:", cookie);
     }
