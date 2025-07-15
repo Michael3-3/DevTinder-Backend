@@ -3,7 +3,8 @@ const connectDb = require('./config/database');
 const bcrypt = require('bcrypt');
 const User = require('./models/user');
 const validate = require('validator');
-const { validateSingUp } = require('./utils/validations');
+const { validateSingUp,loginValidation } = require('./middleware/validations');
+const userAuth = require('./middleware/auth');
 const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken');
 
@@ -48,23 +49,9 @@ app.post('/signup',validateSingUp,async (req,res,next)=>{
     }
 });
 
-app.post('/login', async (req, res) => {
+app.post('/login',loginValidation, async (req, res) => {
     try{
-        const { email,password} = req.query;
-        if (!email || !password) {
-            return res.status(400).send({message: "Email and password are required"});
-        }
-        if (!validate.isEmail(email)) {
-            return res.status(400).send({message: "Invalid email format"});
-        }
-        const user = await User.findOne({email : email});
-        if (!user) {
-            throw new Error("Invalid credentials");
-        }
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            throw new Error("Invalid credentials");
-        }
+        const user  =  req.user;
         console.log("User found:", user);
         // Successful login
         // Generate a JWT token
@@ -85,6 +72,18 @@ app.post('/login', async (req, res) => {
 
 });
 
+
+app.get('/profile',userAuth, async (req, res) => {
+    try{
+        const user = req.user; // User is attached to the request object by the auth middleware
+
+        res.json(user);
+    }
+    catch (error) {
+        console.error("Error fetching profile:", error);
+        res.status(500).json({message: "Internal server error", error: error.message});
+    }
+});
 app.get('/feed', async (req, res) =>{
     try{
         // Check if the user is authenticated

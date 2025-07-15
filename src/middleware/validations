@@ -1,0 +1,44 @@
+const validate = require('validator');
+const bcrypt = require('bcrypt');
+const User = require('../models/user');
+
+const validateSingUp = async (req,res,next)=>{
+    if(!req.body.firstName || !req.body.email || !req.body.password ) {
+        throw new Error("First name, email, and password are required.");
+    }
+    if(req.body.firstName.length > 50 || req.body.firstName.length < 2 || validate.isAlphanumeric(req.body.firstName) === false) {
+        throw new Error("invalid first name");
+    }
+    if(!validate.isEmail(req.body.email)) {
+        throw new Error("invalid email");
+    }
+    if(!validate.isStrongPassword(req.body.password)) {
+        throw new Error("invalid password");
+    }
+    next();
+
+}
+
+
+const loginValidation =async (req, res, next) => {
+     const { email,password} = req.query;
+            if (!email || !password) {
+                throw new Error("Email and password are required");
+            }
+            if (!validate.isEmail(email)) {
+                throw new Error("Invalid email format");
+            }
+            const user = await User.findOne({email : email});
+            if (!user) {
+                throw new Error("Invalid credentials");
+            }
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                throw new Error("Invalid credentials");
+            }
+            req.user = user; // Attach user to request object
+            next();
+}
+
+module.exports = {
+    validateSingUp}
