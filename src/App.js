@@ -49,28 +49,49 @@ app.post('/signup',validateSingUp,async (req,res,next)=>{
     }
 });
 
-app.post('/login',loginValidation, async (req, res,next) => {
-    try{
-        const user  =  req.user;
-        console.log("User found:", user);
-        // Successful login
-        // Generate a JWT token
-        const token = jwt.sign({id:user._id},'secretKey', {expiresIn: '1d'}); // Use a secure secret key in production
-        res.cookie('token', token, {
-                                    httpOnly: true,       // ❌ Can't access from JavaScript
-                                    secure: true,         // ✅ Only sent over HTTPS
-                                    sameSite: 'Strict',   // ✅ Protects against CSRF
-                                    maxAge: 24 * 60 * 60 * 1000 // ✅ 1 day in ms
-                                    });
-       
+app.post('/login', async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
 
-        res.status(200).send("Login successful!!!   ");
-    }catch(error) {
-        console.error("Error during login:", error);
-        res.status(500).send("Error: "+error.message);
+    if (!email || !password) {
+      throw new Error("Email and password are required");
     }
 
+    if (!validate.isEmail(email)) {
+      throw new Error("Invalid email format");
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+
+    const isMatch = await user.validatePassword(password);
+    if (!isMatch) {
+        throw new Error("Invalid credentials");
+    }
+
+    console.log("User found:", user);
+
+    // ✅ Generate JWT token with user ID
+    const token = user.generateJwt();
+    console.log("Generated JWT token:", token);
+
+    // ✅ Set token in cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true, // Set to false on localhost
+      sameSite: 'Strict',
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
+    res.status(200).send("Login successful!!!");
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).send("Error in login: " + error.message);
+  }
 });
+
 
 
 app.get('/profile',userAuth, async (req, res) => {
@@ -151,5 +172,5 @@ app.put('/user/:email', async (req, res) => {
 app.use((err, req, res, next) => {
     
     console.error("Error:", err);
-    res.status(500).json({message: "Internal server hello error", error: err.message});
+    res.status(500).json({message: "Internal server error", error: err.message});
 });
