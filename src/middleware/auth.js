@@ -2,6 +2,7 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 const userAuth =async (req,res,next) =>{
+    try{
     const token = req.cookies.token;
     if (!token) {
         throw new Error("Unauthorized access bro: No token provided");
@@ -16,6 +17,10 @@ const userAuth =async (req,res,next) =>{
     }
     req.user = user; // Attach user to request object
     next();
+}
+catch(err){
+    res.status(401).json({message:err.message})
+    }
 };
 
 
