@@ -46,9 +46,24 @@ const userSchema = new Schema({
     },
     gender: {
         type: String,
+        maxLength: 20,
         enum: {
             values: ['male', 'female', 'other'],
             message: "{VALUE} is not a valid gender. Allowed values: 'male', 'female', 'other'."
+        }
+    },
+    about: {
+        type: String,
+        maxLength: [500, "{VALUE} exceeds the maximum length of 500 characters. Please provide a shorter bio."],
+        default: "No bio provided."
+    },
+    profilePicture: {
+        type: String,
+        default: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",// Placeholder URL
+        validate(value) {
+            if (!validate.isURL(value)) {
+                throw new Error("{VALUE} is not a valid URL.");
+            }
         }
     }
 }, {

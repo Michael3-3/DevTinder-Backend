@@ -56,5 +56,14 @@ authRoute.post('/login',loginValidation, async (req, res, next) => {
 });
 
 
+authRoute.post('/logout', (req, res) => {
+  // ✅ Clear JWT token from cookie
+  res.cookie('token',null,{
+    httpOnly: true,
+    expires: new Date(0) // Set expiration to the past
+  })
+  res.status(200).send("Logged out successfully");
+});
+
 
 module.exports = authRoute;
