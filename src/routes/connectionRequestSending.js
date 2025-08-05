@@ -25,12 +25,13 @@ connectionRequestSending.post('/connectionRequestSending/:status/:resId', userAu
         if (userId.toString() === resId) {
             return res.status(400).json({ message: "You cannot send a request to yourself" });
         }
-        // Check if the request is already sent
+        // Check if the request is already sent and the request is different from the current status
         const existingRequest = await ConnectionRequest.findOne({
             sender: userId,
-            receiver: resId,
-            status: 'pending'
+            receiver: resId,   
+            status: status 
         });
+        
         if (existingRequest) {
             return res.status(400).json({ message: "Connection request already sent" });
         }
@@ -42,12 +43,25 @@ connectionRequestSending.post('/connectionRequestSending/:status/:resId', userAu
         if (isConnected) {
             return res.status(400).json({ message: "You are already connected with this user" });
         }
+       // check if the record fo the sender and receiver already exists with different status. if it is true update the status
+        const existingConnection = await ConnectionRequest.findOne({
+            sender: userId,
+            receiver: resId,
+            status: { $ne: status } // Check if the status is different
+        });
+        if (existingConnection) {
+            existingConnection.status = status; // Update the status
+            await existingConnection.save();
+            return res.status(200).json({ message: `Connection request status updated to ${status}` });
+            }
         // Create a new connection request
-        const connectionRequest = new ConnectionRequest({   
+        const connectionRequest = new ConnectionRequest({
             sender: userId,
             receiver: resId,
             status: status
         });
+       
+       
         // Save the connection request to the database
         await connectionRequest.save();
 
@@ -61,3 +75,5 @@ connectionRequestSending.post('/connectionRequestSending/:status/:resId', userAu
     }
 });
 
+
+module.exports = connectionRequestSending;

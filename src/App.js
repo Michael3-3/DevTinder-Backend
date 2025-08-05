@@ -15,6 +15,7 @@ const app = express(); //* Create an Express application
 const authRoute = require('./routes/authRoute');
 const profileRoute = require('./routes/profileRoute');
 const feedRoute = require('./routes/feedRoute');
+const connectionRequestSending = require('./routes/connectionRequestSending');
 
 //* built-in middlewares
 app.use(cookieParser()); // Middleware to parse cookies
@@ -37,7 +38,7 @@ connectDb()
 app.use('/', authRoute);
 app.use('/', profileRoute);
 app.use('/', feedRoute);
-
+app.use('/', connectionRequestSending);
 
 
 app.use((err, req, res, next) => {
