@@ -14,7 +14,7 @@ const app = express(); //* Create an Express application
 //* import routes
 const authRoute = require('./routes/authRoute');
 const profileRoute = require('./routes/profileRoute');
-const feedRoute = require('./routes/feedRoute');
+const feedRoute = require('./routes/feed');
 const connectionRequestSending = require('./routes/connectionRequest');
 
 //* built-in middlewares
