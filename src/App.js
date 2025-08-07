@@ -15,7 +15,7 @@ const app = express(); //* Create an Express application
 const authRoute = require('./routes/authRoute');
 const profileRoute = require('./routes/profileRoute');
 const feedRoute = require('./routes/feedRoute');
-const connectionRequestSending = require('./routes/connectionRequestSending');
+const connectionRequestSending = require('./routes/connectionRequest');
 
 //* built-in middlewares
 app.use(cookieParser()); // Middleware to parse cookies
