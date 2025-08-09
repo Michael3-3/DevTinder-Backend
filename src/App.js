@@ -6,7 +6,7 @@ const { validateSingUp,loginValidation } = require('./middleware/validations');
 const userAuth = require('./middleware/auth');
 const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken');
-
+const cors = require('cors')
 
 
 const app = express(); //* Create an Express application
@@ -18,6 +18,10 @@ const feedRoute = require('./routes/feed');
 const connectionRequestSending = require('./routes/connectionRequest');
 
 //* built-in middlewares
+app.use(cors({
+    origin: 'http://localhost:5173', // Adjust this to your frontend URL
+    credentials: true // Allow cookies to be sent with requests
+}));
 app.use(cookieParser()); // Middleware to parse cookies
 app.use(express.json()); // Middleware to parse JSON bodies
 
