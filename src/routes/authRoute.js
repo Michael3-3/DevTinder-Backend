@@ -50,7 +50,7 @@ authRoute.post('/login',loginValidation, async (req, res, next) => {
     // ✅ Set token in cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true, // Set to false on localhost
+      secure: false, // Set to false on localhost
       sameSite: 'Strict',
       maxAge: 24 * 60 * 60 * 1000
     });
@@ -69,6 +69,7 @@ authRoute.post('/logout', (req, res) => {
   // ✅ Clear JWT token from cookie
   res.cookie('token',null,{
     httpOnly: true,
+    secure: false, // Set to false on localhost
     expires: new Date(0) // Set expiration to the past
   })
   res.status(200).send("Logged out successfully");
