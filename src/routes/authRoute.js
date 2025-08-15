@@ -3,7 +3,6 @@ const authRoute = express.Router();
 const { validateSingUp, loginValidation } = require('../middleware/validations');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
-
 authRoute.post('/signup',validateSingUp,async (req,res,next)=>{
     
     try {
@@ -18,7 +17,15 @@ authRoute.post('/signup',validateSingUp,async (req,res,next)=>{
         });
         await user.save();
         console.log("User created successfully:", user);
-        res.status(201).send({message: "User created successfully", user});
+        // in responce only send requred fields
+        const resUser = {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        }
+        
+        res.status(201).send({message: "User created successfully", resUser});
     } 
     
     
@@ -48,7 +55,9 @@ authRoute.post('/login',loginValidation, async (req, res, next) => {
       maxAge: 24 * 60 * 60 * 1000
     });
 
-    res.status(200).send("Login successful!!!");
+    res.status(200).json({
+      message: "Login successful",
+      user: user});
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).send("Error in login: " + error.message);

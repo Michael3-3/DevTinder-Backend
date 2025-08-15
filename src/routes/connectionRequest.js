@@ -140,4 +140,36 @@ connectionRequestSending.get('/connections', userAuth, async (req, res) => {
 });
 
 
+// lets create a api to see all the connection request that user get
+connectionRequestSending.get('/userConnectionsRequest', userAuth, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    console.log(userId)
+    // Find all requests where the logged-in user is the receiver
+    const connections = await ConnectionRequest.find({
+      receiver: userId,
+      status: "interested"// or "pending" if you mean requests not yet accepted
+    }).populate('sender', 'firstName lastName age gender about profilePicture');
+
+    if (!connections.length) {
+      return res.status(404).json({ message: "No connections found bro" });
+    }
+
+    // Extract sender details directly
+    const senders = connections.map(connection => connection.sender);
+
+    res.status(200).json({
+      message: "Incoming connection requests fetched successfully",
+      connections: senders
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message
+    });
+  }
+});
+
+
 module.exports = connectionRequestSending;

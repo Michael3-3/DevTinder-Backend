@@ -59,7 +59,7 @@ const userSchema = new Schema({
     },
     profilePicture: {
         type: String,
-        default: "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png",// Placeholder URL
+        default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8XqixlcD45TBunRhSgIYTzP2NQ_XkNaguQw&s",// Placeholder URL
         validate(value) {
             if (!validate.isURL(value)) {
                 throw new Error("{VALUE} is not a valid URL.");

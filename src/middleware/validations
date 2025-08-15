@@ -12,8 +12,13 @@ const validateSingUp = async (req,res,next)=>{
     if(!validate.isEmail(req.body.email)) {
         throw new Error("invalid email");
     }
+    // check if the email is already in use
+    const existingUser = await User.findOne({ email: req.body.email });
+    if(existingUser) {
+        throw new Error("Email is already in use");
+        }
     if(!validate.isStrongPassword(req.body.password)) {
-        throw new Error("invalid password");
+        throw new Error("password is not strong enough");
     }
     next();
 
