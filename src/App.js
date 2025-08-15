@@ -13,7 +13,7 @@ const app = express();
 
 // ✅ CORS setup — keep it at the very top (before routes)
 app.use(cors({
-    origin: "http://16.16.213.72", // frontend URL
+    origin: "http://localhost:5173", // frontend URL
     credentials: true,
 }));
 
