@@ -7,7 +7,7 @@ const userAuth =async (req,res,next) =>{
     if (!token) {
         throw new Error("Unauthorized access bro: No token provided");
     }
-    const decoded =await jwt.verify(token, 'secretKey');
+    const decoded =await jwt.verify(token, process.env.JWT_SECRET);
     if (!decoded) {
         throw new Error("Unauthorized access: Invalid token");
     }

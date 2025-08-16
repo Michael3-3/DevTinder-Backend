@@ -71,7 +71,7 @@ const userSchema = new Schema({
 });
 
 userSchema.methods.generateJwt = function() {
-    const token = jwt.sign({ id: this._id},'secretKey', { expiresIn: '1d' });
+    const token = jwt.sign({ id: this._id},process.env.JWT_SECRET, { expiresIn: '1d' });
     return token;
 }
 

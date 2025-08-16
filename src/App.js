@@ -2,7 +2,7 @@ const express = require('express');
 const connectDb = require('./config/database');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-
+require("dotenv").config();
 // Import routes
 const authRoute = require('./routes/authRoute');
 const profileRoute = require('./routes/profileRoute');
@@ -13,7 +13,7 @@ const app = express();
 
 // ✅ CORS setup — keep it at the very top (before routes)
 app.use(cors({
-    origin: "http://localhost:5173", // frontend URL
+    origin: "http://16.16.213.72", // frontend URL
     credentials: true,
 }));
 
@@ -32,7 +32,7 @@ app.use(express.json());
 connectDb()
     .then(() => {
         console.log("Connected to MongoDB");
-        app.listen(3001, () => {
+        app.listen(process.env.port, () => {
             console.log("Server is running on port 3001");
         });
     })
