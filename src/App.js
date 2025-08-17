@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const connectDb = require('./config/database');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -7,23 +8,20 @@ require("dotenv").config();
 const authRoute = require('./routes/authRoute');
 const profileRoute = require('./routes/profileRoute');
 const feedRoute = require('./routes/feed');
+const messageRoute = require('./routes/messageRoute');
 const connectionRequestSending = require('./routes/connectionRequest');
+const initializeSocket = require('./utils/initailizeSocket');
 
 const app = express();
 
+const server = http.createServer(app);
+initializeSocket(server);
+
 // ✅ CORS setup — keep it at the very top (before routes)
 app.use(cors({
-    origin: "http://16.16.213.72", // frontend URL
+    origin: "https://devmeet.ddns.net/", // frontend URL
     credentials: true,
 }));
-
-// ✅ Preflight requests handler (safe way)
-// app.options('*', (req, res) => {
-//     res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-//     res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
-//     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-//     res.sendStatus(200);
-// });
 
 app.use(cookieParser());
 app.use(express.json());
@@ -32,7 +30,7 @@ app.use(express.json());
 connectDb()
     .then(() => {
         console.log("Connected to MongoDB");
-        app.listen(process.env.port, () => {
+        server.listen(process.env.port, () => {
             console.log("Server is running on port 3001");
         });
     })
@@ -45,6 +43,7 @@ app.use('/', authRoute);
 app.use('/', profileRoute);
 app.use('/', feedRoute);
 app.use('/', connectionRequestSending);
+app.use('/',messageRoute)
 
 // Global error handler
 app.use((err, req, res, next) => {
